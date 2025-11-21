@@ -1,72 +1,70 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Logging/LogMacros.h"
+#include "InputActionValue.h"
 #include "CatchMeCharacter.generated.h"
 
-class USpringArmComponent;
 class UCameraComponent;
+class USpringArmComponent;
 class UInputMappingContext;
 class UInputAction;
-struct FInputActionValue;
 
-DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
-UCLASS(config=Game)
+UCLASS()
 class ACatchMeCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
-	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* CameraBoom;
-
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* FollowCamera;
-	
-	/** MappingContext */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
-
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
-
-	/** Move Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
-
-	/** Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
+#pragma region ACharacter Override
 
 public:
 	ACatchMeCharacter();
-	
 
-protected:
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	/** Called for movement input */
-	void Move(const FInputActionValue& Value);
+	virtual void BeginPlay() override;
 
-	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
-			
+#pragma endregion
 
-protected:
-
-	virtual void NotifyControllerChanged() override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+#pragma region DXPlayerCharacter Components
 
 public:
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	FORCEINLINE USpringArmComponent* GetSpringArm() const { return SpringArm; }
+
+	FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DXPlayerCharacter|Components")
+	TObjectPtr<USpringArmComponent> SpringArm;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DXPlayerCharacter|Components")
+	TObjectPtr<UCameraComponent> Camera;
+
+#pragma endregion
+
+#pragma region Input
+
+private:
+	void HandleMoveInput(const FInputActionValue& InValue);
+
+	void HandleLookInput(const FInputActionValue& InValue);
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DXPlayerCharacter|Input")
+	TObjectPtr<UInputMappingContext> InputMappingContext;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DXPlayerCharacter|Input")
+	TObjectPtr<UInputAction> MoveAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DXPlayerCharacter|Input")
+	TObjectPtr<UInputAction> LookAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DXPlayerCharacter|Input")
+	TObjectPtr<UInputAction> JumpAction;
+
+#pragma endregion
+
 };
 
