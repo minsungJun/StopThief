@@ -56,15 +56,19 @@ void ACatchMeGameModeBase::StartGame()
 	FText DisplayText = EnumPtr->GetDisplayNameTextByValue((int64)CMPS1->PlayerClass);
 	UE_LOG(LogTemp, Log, TEXT("PlayerClass : %s"), *DisplayText.ToString());
     SpawnAndPossessPawnFor(AllPlayerControllers[0], CMPS1->PlayerClass);
-    CMPS1->GetPawn()->AddActorLocalOffset(FVector(0.f, -100.f, 0.f));
 
 	DisplayText = EnumPtr->GetDisplayNameTextByValue((int64)CMPS2->PlayerClass);
 	UE_LOG(LogTemp, Log, TEXT("PlayerClass : %s"), *DisplayText.ToString());
     SpawnAndPossessPawnFor(AllPlayerControllers[1], CMPS2->PlayerClass);
+
+	CMPS1->GetPawn()->AddActorLocalOffset(FVector(0.f, -100.f, 0.f));
     CMPS2->GetPawn()->AddActorLocalOffset(FVector(0.f, 100.f, 0.f));
 
 
+	StartTimer();
+
 }
+
 
 
 
@@ -136,4 +140,61 @@ void ACatchMeGameModeBase::SpawnAndPossessPawnFor(ACatchMePlayerController* CMPC
         ExistingActor->Destroy();
     }
 
+}
+
+
+void ACatchMeGameModeBase::StartTimer()
+{
+	// 타이머 최대 시간을 BP에서 수정 가능하게 MaxTimerCount를 이용
+	TimerCount = MaxTimerCount;
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle, FTimerDelegate::CreateLambda([&]
+			{
+				// 타이머가 시작되면 게임 중인 플레이어의 타이머 수정
+				for (const auto& CMPC : AllPlayerControllers)
+				{
+					FString CombinedMessageString = TEXT("Time Left : ") + FString::FromInt(TimerCount);
+					CMPC->TimerText = FText::FromString(CombinedMessageString);
+				}
+				--TimerCount;
+				EndTimer();
+			}
+		), 1.0f, true, 0.0f);
+
+}
+
+void ACatchMeGameModeBase::ResetTimer()
+{
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+}
+
+void ACatchMeGameModeBase::EndTimer()
+{
+	if (TimerCount == 0)
+	{
+		HandleThiefWin();
+		ResetTimer();
+	}
+
+}
+
+void ACatchMeGameModeBase::HandlePoliceWin()
+{
+	ResetTimer();
+	UE_LOG(LogTemp, Warning, TEXT("HandlePoliceWin"));
+	for (const auto& CMPC : AllPlayerControllers)
+	{
+		FString CombinedMessageString = TEXT("Police Win");
+		CMPC->NotificationText = FText::FromString(CombinedMessageString);
+	}
+}
+
+void ACatchMeGameModeBase::HandleThiefWin()
+{
+	UE_LOG(LogTemp, Warning, TEXT("HandleThiefWin"));
+	for (const auto& CMPC : AllPlayerControllers)
+	{
+		FString CombinedMessageString = TEXT("Thief Win");
+		CMPC->NotificationText = FText::FromString(CombinedMessageString);
+	}
 }

@@ -11,6 +11,7 @@
 
 
 class ACatchMePlayerController;
+//class ACatchMeThief;
 
 
 UCLASS()
@@ -26,6 +27,17 @@ public:
 	void SpawnAndPossessPawnFor(ACatchMePlayerController* CMPC, EPlayerClass playerclass);
 
 
+	void StartTimer();
+
+	void ResetTimer();
+
+	void EndTimer();
+
+	void HandlePoliceWin();
+
+	void HandleThiefWin();
+
+
 protected:
 
 	TArray<TObjectPtr<ACatchMePlayerController>> AllPlayerControllers;
@@ -35,6 +47,13 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Pawn")
 	TSubclassOf<APawn> ThiefPawnClass;
+
+	int32 TimerCount;
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 MaxTimerCount;
+
+	FTimerHandle TimerHandle;
 	
 };
 

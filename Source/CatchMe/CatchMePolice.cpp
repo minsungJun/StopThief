@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "DrawDebugHelpers.h"
+#include <Kismet/GameplayStatics.h>
 
 ACatchMePolice::ACatchMePolice()
 {
@@ -79,7 +80,8 @@ void ACatchMePolice::ServerFire_Implementation(const FVector_NetQuantize& TraceS
             *HitResult.ImpactPoint.ToString());
 
         // 여기에 나중에 Damage 처리 넣으면 됨
-        // UGameplayStatics::ApplyDamage(HitActor, DamageAmount, GetController(), this, UDamageType::StaticClass());
+        float DamageAmount = 150.f;
+        UGameplayStatics::ApplyDamage(HitActor, DamageAmount, GetController(), this, UDamageType::StaticClass());
     }
     else
     {
