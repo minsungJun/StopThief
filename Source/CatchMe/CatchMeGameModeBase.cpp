@@ -42,7 +42,7 @@ void ACatchMeGameModeBase::StartGame()
 {
 	// 배열 안에 있는 플레이어에게 역할을 부여
 	// PlayerState에 PlayerClass변경
-	// 나중에 랜덤으로 경찰 도둑 결정
+	// 나중에 랜덤으로 경찰 도둑 결정하도록 수정
 	ACatchMePlayerState* CMPS1 = AllPlayerControllers[0]->GetPlayerState<ACatchMePlayerState>();
 	CMPS1->PlayerClass = EPlayerClass::Police;
 	
@@ -63,6 +63,20 @@ void ACatchMeGameModeBase::StartGame()
 
 	CMPS1->GetPawn()->AddActorLocalOffset(FVector(0.f, -100.f, 0.f));
     CMPS2->GetPawn()->AddActorLocalOffset(FVector(0.f, 100.f, 0.f));
+
+
+
+	for (const auto& CMPC : AllPlayerControllers)
+	{
+		ACatchMePlayerState* CMPS = CMPC->GetPlayerState<ACatchMePlayerState>();
+		if (CMPS->PlayerClass == EPlayerClass::Police)
+		{
+			ACatchMeGameStateBase* GS = GetGameState<ACatchMeGameStateBase>();
+			if (!GS) return;
+			FString CombinedMessageString = TEXT("HP : ") + FString::FromInt(GS->PoliceHP);
+			CMPC->PoliceHPText = FText::FromString(CombinedMessageString);
+		}
+	}
 
 
 	StartTimer();
@@ -197,4 +211,25 @@ void ACatchMeGameModeBase::HandleThiefWin()
 		FString CombinedMessageString = TEXT("Thief Win");
 		CMPC->NotificationText = FText::FromString(CombinedMessageString);
 	}
+}
+
+void ACatchMeGameModeBase::KillCitizen()
+{
+	ACatchMeGameStateBase* GS = GetGameState<ACatchMeGameStateBase>();
+	if (!GS) return;
+	GS->PoliceHP--;
+
+
+	for (const auto& CMPC : AllPlayerControllers)
+	{
+		ACatchMePlayerState* CMPS = CMPC->GetPlayerState<ACatchMePlayerState>();
+		if (CMPS->PlayerClass == EPlayerClass::Police)
+		{
+			FString CombinedMessageString = TEXT("HP : ") + FString::FromInt(GS->PoliceHP);
+			CMPC->PoliceHPText = FText::FromString(CombinedMessageString);
+		}
+	}
+
+	if (GS->PoliceHP <= 0)
+		HandleThiefWin();
 }

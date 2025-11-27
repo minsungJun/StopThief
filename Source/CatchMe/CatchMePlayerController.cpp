@@ -14,6 +14,7 @@ void ACatchMePlayerController::GetLifetimeReplicatedProps(TArray<class FLifetime
 
 	DOREPLIFETIME(ThisClass, TimerText);
 	DOREPLIFETIME(ThisClass, NotificationText);
+	DOREPLIFETIME(ThisClass, PoliceHPText);
 
 }
 
@@ -42,6 +43,15 @@ void ACatchMePlayerController::BeginPlay()
 		if (IsValid(TimerTextWidgetInstance) == true)
 		{
 			TimerTextWidgetInstance->AddToViewport();
+		}
+	}
+
+	if (IsValid(PoliceHPTextWidgetClass) == true)
+	{
+		PoliceHPTextWidgetInstance = CreateWidget<UUserWidget>(this, PoliceHPTextWidgetClass);
+		if (IsValid(PoliceHPTextWidgetClass) == true)
+		{
+			PoliceHPTextWidgetInstance->AddToViewport();
 		}
 	}
 }

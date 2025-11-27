@@ -1,5 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿#include "CatchMeGameStateBase.h"
+#include "Net/UnrealNetwork.h"
 
+void ACatchMeGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-#include "CatchMeGameStateBase.h"
+    DOREPLIFETIME(ThisClass, PoliceHP);
 
+}

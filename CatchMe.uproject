@@ -21,6 +21,14 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "GameplayStateTree",
+			"Enabled": true
+		},
+		{
+			"Name": "StateGraph",
+			"Enabled": true
 		}
 	]
 }

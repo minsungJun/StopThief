@@ -36,6 +36,12 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UUserWidget> TimerTextWidgetInstance;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> PoliceHPTextWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UUserWidget> PoliceHPTextWidgetInstance;
+
 public:
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
@@ -43,5 +49,8 @@ public:
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	FText NotificationText;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	FText PoliceHPText;
 
 };

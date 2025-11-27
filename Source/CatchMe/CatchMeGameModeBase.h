@@ -37,6 +37,8 @@ public:
 
 	void HandleThiefWin();
 
+	void KillCitizen();
+
 
 protected:
 

@@ -13,7 +13,14 @@ UCLASS()
 class CATCHME_API ACatchMeGameStateBase : public AGameStateBase
 {
 	GENERATED_BODY()
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+public:
+
+	UPROPERTY(Replicated)
+	int32 PoliceHP = 10;
 
 
-	
+
 };
