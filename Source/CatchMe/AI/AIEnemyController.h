@@ -12,11 +12,16 @@ class CATCHME_API AAIEnemyController : public AAIController
     GENERATED_BODY()
     AAIEnemyController();
 
+
+
 public:
     virtual void OnPossess(APawn* InPawn) override;
 
     UFUNCTION(BlueprintCallable)
     void SetTargetActor(AActor* Target);
+
+    UFUNCTION()
+    void SendDeadToBT();
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "AI")

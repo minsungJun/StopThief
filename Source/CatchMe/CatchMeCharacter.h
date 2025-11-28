@@ -51,6 +51,10 @@ private:
 
 	void HandleLookInput(const FInputActionValue& InValue);
 
+	void Sprint();
+
+	void StopSprint();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DXPlayerCharacter|Input")
 	TObjectPtr<UInputMappingContext> InputMappingContext;
@@ -64,7 +68,26 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DXPlayerCharacter|Input")
 	TObjectPtr<UInputAction> JumpAction;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DXPlayerCharacter|Input")
+	TObjectPtr<UInputAction> SprintAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float WalkSpeed = 250;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float SprintSpeed = 350;
+
+	UPROPERTY(Replicated)
+	bool bIsSprinting = false;
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetSprinting(bool bNewSprinting);
+
 #pragma endregion
+
+public:
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastOnRagdoll();
 
 };
 

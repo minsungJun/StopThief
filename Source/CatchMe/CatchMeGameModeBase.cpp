@@ -3,6 +3,7 @@
 #include "CatchMeGameModeBase.h"
 #include "CatchMePlayerController.h"
 #include "CatchMeGameStateBase.h"
+#include "CatchMeItem.h"
 
 
 void ACatchMeGameModeBase::OnPostLogin(AController* NewPlayer)
@@ -78,6 +79,37 @@ void ACatchMeGameModeBase::StartGame()
 		}
 	}
 
+	if (UWorld* World = GetWorld())
+	{
+		FActorSpawnParameters Params;
+		Params.Name = FName(TEXT("TestPolice")); // 필요하면 이름 지정 (선택)
+
+		FVector Location = FVector(1300,1300,60);
+		FRotator Rotation = FRotator::ZeroRotator;
+
+		ACatchMeItem* NewItem = World->SpawnActor<ACatchMeItem>(
+			TestItemClass1,   // TSubclassOf<ACatchMeItem>
+			Location,
+			Rotation,
+			Params
+		);
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		FActorSpawnParameters Params;
+		Params.Name = FName(TEXT("TestThief")); // 필요하면 이름 지정 (선택)
+
+		FVector Location = FVector(1200, 1300, 60);
+		FRotator Rotation = FRotator::ZeroRotator;
+
+		ACatchMeItem* NewItem = World->SpawnActor<ACatchMeItem>(
+			TestItemClass2,   // TSubclassOf<ACatchMeItem>
+			Location,
+			Rotation,
+			Params
+		);
+	}
 
 	StartTimer();
 

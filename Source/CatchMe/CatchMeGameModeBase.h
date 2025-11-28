@@ -50,6 +50,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Pawn")
 	TSubclassOf<APawn> ThiefPawnClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Test")
+	TSubclassOf<AActor> TestItemClass1;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Test")
+	TSubclassOf<AActor> TestItemClass2;
+
 	int32 TimerCount;
 
 	UPROPERTY(EditDefaultsOnly)

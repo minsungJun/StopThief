@@ -32,3 +32,8 @@ void AAIEnemyController::SetTargetActor(AActor* Target)
         BlackboardComp->SetValueAsObject("TargetActor", Target);
     }
 }
+
+void AAIEnemyController::SendDeadToBT()
+{
+    BlackboardComp->SetValueAsBool(TEXT("IsDead"), true);
+}

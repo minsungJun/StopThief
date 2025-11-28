@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
+#include "Net/UnrealNetwork.h"
 
 ACatchMeCharacter::ACatchMeCharacter()
 {
@@ -43,6 +44,9 @@ void ACatchMeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 	EIC->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 	EIC->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+
+	EIC->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ThisClass::Sprint);
+	EIC->BindAction(SprintAction, ETriggerEvent::Completed, this, &ThisClass::StopSprint);
 }
 
 void ACatchMeCharacter::BeginPlay()
@@ -95,3 +99,64 @@ void ACatchMeCharacter::HandleLookInput(const FInputActionValue& InValue)
 	AddControllerPitchInput(InLookVector.Y);
 }
 
+void ACatchMeCharacter::Sprint()
+{
+	if (!Controller || !IsLocallyControlled())
+		return;
+
+	bIsSprinting = true;
+
+	if (UCharacterMovementComponent* MC = GetCharacterMovement())
+	{
+		MC->MaxWalkSpeed = SprintSpeed;
+	}
+
+	// 서버에도 알려주기
+	ServerSetSprinting(true);
+
+}
+
+void ACatchMeCharacter::StopSprint()
+{
+	if (!Controller || !IsLocallyControlled())
+		return;
+
+	bIsSprinting = false;
+
+	if (UCharacterMovementComponent* MC = GetCharacterMovement())
+	{
+		MC->MaxWalkSpeed = WalkSpeed;
+	}
+
+	ServerSetSprinting(false);
+}
+
+void ACatchMeCharacter::ServerSetSprinting_Implementation(bool bNewSprinting)
+{
+	bIsSprinting = bNewSprinting;
+
+	if (UCharacterMovementComponent* MC = GetCharacterMovement())
+	{
+		MC->MaxWalkSpeed = bNewSprinting ? SprintSpeed : WalkSpeed;
+	}
+}
+
+void ACatchMeCharacter::MulticastOnRagdoll_Implementation()
+{
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetAllBodiesSimulatePhysics(true);
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->WakeAllRigidBodies();
+	GetMesh()->bBlendPhysics = true;
+	GetMesh()->bPauseAnims = true;
+
+}
+
+
+void ACatchMeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACatchMeCharacter, bIsSprinting);
+}

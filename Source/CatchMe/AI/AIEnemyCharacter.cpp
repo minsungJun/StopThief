@@ -5,6 +5,9 @@
 #include "EnemyStateMachineComponent.h"
 #include "../CatchMeGameModeBase.h"
 #include "Net/UnrealNetwork.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 AAIEnemyCharacter::AAIEnemyCharacter()
 {
@@ -56,6 +59,12 @@ float AAIEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Dama
     if (CurrentHP <= 0.f)
     {
         bIsDead = true;
+
+        if (AAIEnemyController* AICon = Cast<AAIEnemyController>(GetController()))
+        {
+            AICon->SendDeadToBT();
+        }
+        StateMachine->ChangeState(EEnemyState::Dead);
         Die(EventInstigator);
     }
 
@@ -75,11 +84,23 @@ void AAIEnemyCharacter::Die(AController* KillerController)
         if (ACatchMeGameModeBase* GM = World->GetAuthGameMode<ACatchMeGameModeBase>())
         {
             GM->KillCitizen();
-
         }
     }
 
-    // 나중에 래그돌/리스폰 넣고 싶으면 Destroy 대신 다른 처리
-    Destroy();
+    MulticastOnRagdoll();
+
+}
+
+void AAIEnemyCharacter::MulticastOnRagdoll_Implementation()
+{
+    GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    GetMesh()->SetAllBodiesSimulatePhysics(true);
+    GetMesh()->SetSimulatePhysics(true);
+    GetMesh()->WakeAllRigidBodies();
+    GetMesh()->bBlendPhysics = true;
+    GetMesh()->bPauseAnims = true;
+
+    SetLifeSpan(5);
 }
 

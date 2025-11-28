@@ -23,6 +23,9 @@ public:
 
     void Die(AController* KillerController);
 
+    UFUNCTION(NetMulticast, Reliable)
+    void MulticastOnRagdoll();
+
 protected:
     virtual void BeginPlay() override;
 

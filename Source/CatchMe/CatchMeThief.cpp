@@ -58,7 +58,7 @@ void ACatchMeThief::Die(AController* KillerController)
     }
 
     // 나중에 래그돌/리스폰 넣고 싶으면 Destroy 대신 다른 처리
-    Destroy();
+    MulticastOnRagdoll();
 }
 
 void ACatchMeThief::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&OutLifetimeProps) const
