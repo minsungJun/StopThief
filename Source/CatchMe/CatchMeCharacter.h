@@ -55,6 +55,8 @@ private:
 
 	void StopSprint();
 
+
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "DXPlayerCharacter|Input")
 	TObjectPtr<UInputMappingContext> InputMappingContext;
@@ -77,6 +79,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float SprintSpeed = 350;
 
+
 	UPROPERTY(Replicated)
 	bool bIsSprinting = false;
 
@@ -88,6 +91,18 @@ protected:
 public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastOnRagdoll();
+
+	UFUNCTION()
+	void UpdateMovementSpeed();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_ChangingSpeed)
+	float ChangingSpeed = 0;
+
+	UFUNCTION()
+	void OnRep_ChangingSpeed()
+	{
+		UpdateMovementSpeed(); // 여기서 MaxWalkSpeed 갱신
+	}
 
 };
 

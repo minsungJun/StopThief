@@ -13,7 +13,8 @@ EBTNodeResult::Type UBTTask_FindPatrolPoint::ExecuteTask(UBehaviorTreeComponent&
     UBlackboardComponent* BB = OwnerComp.GetBlackboardComponent();
     if (!BB) return EBTNodeResult::Failed;
 
-    const FVector Home = BB->GetValueAsVector(HomeLocationKey.SelectedKeyName);
+    //const FVector Home = BB->GetValueAsVector(HomeLocationKey.SelectedKeyName);
+    const FVector Home = FVector(0,0,0);
 
     float Radius = DefaultRadius;
     if (PatrolRadiusKey.SelectedKeyType)  // 키가 세팅돼 있으면

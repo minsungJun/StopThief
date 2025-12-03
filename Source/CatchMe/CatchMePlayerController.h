@@ -42,7 +42,19 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UUserWidget> PoliceHPTextWidgetInstance;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> CrossHairWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UUserWidget> CrossHairWidgetInstance;
+
 public:
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> StartButtonWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UUserWidget> StartButtonWidgetInstance;
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	FText TimerText;
@@ -52,5 +64,17 @@ public:
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	FText PoliceHPText;
+
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_CallStartGame();
+
+	UFUNCTION(Client, Reliable)
+	void Client_HideStartButton();
+
+	UFUNCTION(Client, Reliable)
+	void Client_ShowStartButton();
+
+
 
 };

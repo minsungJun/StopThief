@@ -26,10 +26,14 @@ public:
     UFUNCTION(NetMulticast, Reliable)
     void MulticastOnRagdoll();
 
+    UFUNCTION()
+    void UpdateMovementSpeed();
+
 protected:
     virtual void BeginPlay() override;
 
-
+    UFUNCTION(Server, Reliable)
+    void ServerSetSprinting(bool bNewSprinting);
 
 public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
@@ -43,5 +47,11 @@ public:
     float CurrentHP;
 
     bool bIsDead;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    float WalkSpeed = 250;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    float ChangingSpeed = 0;
 
 };

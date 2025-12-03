@@ -23,6 +23,7 @@ public:
     UFUNCTION()
     void SendDeadToBT();
 
+
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "AI")
     UBehaviorTree* BehaviorTreeAsset;

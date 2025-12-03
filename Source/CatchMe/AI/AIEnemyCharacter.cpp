@@ -8,10 +8,12 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AAIEnemyCharacter::AAIEnemyCharacter()
 {
-
+    bReplicates = true;
+    SetReplicateMovement(true);
 }
 
 void AAIEnemyCharacter::BeginPlay()
@@ -102,5 +104,21 @@ void AAIEnemyCharacter::MulticastOnRagdoll_Implementation()
     GetMesh()->bPauseAnims = true;
 
     SetLifeSpan(5);
+}
+
+void AAIEnemyCharacter::ServerSetSprinting_Implementation(bool bNewSprinting)
+{
+    if (UCharacterMovementComponent* MC = GetCharacterMovement())
+    {
+        MC->MaxWalkSpeed = WalkSpeed + ChangingSpeed;
+    }
+}
+
+void AAIEnemyCharacter::UpdateMovementSpeed()
+{
+    if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+    {
+        MoveComp->MaxWalkSpeed = WalkSpeed + ChangingSpeed;
+    }
 }
 

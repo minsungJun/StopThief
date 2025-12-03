@@ -12,17 +12,24 @@ void AAIEnemyController::OnPossess(APawn* InPawn)
 {
     Super::OnPossess(InPawn);
 
-    if (BehaviorTreeAsset)
+    UE_LOG(LogTemp, Log, TEXT("[AI] OnPossess %s, World=%s, NetMode=%d, Role=%d"),
+        *InPawn->GetName(),
+        *GetWorld()->GetName(),
+        (int32)GetWorld()->GetNetMode(),
+        (int32)GetLocalRole());
+
+    if (BehaviorTreeAsset && HasAuthority())
     {
         UseBlackboard(BehaviorTreeAsset->BlackboardAsset, BlackboardComp);
         RunBehaviorTree(BehaviorTreeAsset);
+
+        if (InPawn && BlackboardComp)
+        {
+            BlackboardComp->SetValueAsVector(TEXT("HomeLocation"), InPawn->GetActorLocation());
+        }
     }
 
-    if (InPawn && BlackboardComp)
-    {
-        BlackboardComp->SetValueAsVector(TEXT("HomeLocation"), InPawn->GetActorLocation());
-        //InPawn->OnTakeAnyDamage.AddDynamic(this, &AAIEnemyController::OnTakeAnyDamage_Handled);
-    }
+
 }
 
 void AAIEnemyController::SetTargetActor(AActor* Target)

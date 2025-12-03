@@ -15,12 +15,12 @@ bool ACatchMeItem::IsNetRelevantFor(const AActor* RealViewer, const AActor* View
     const ACatchMePlayerState* PS = PC ? PC->GetPlayerState<ACatchMePlayerState>() : nullptr;
     const EPlayerClass PlayerClass = PS ? PS->PlayerClass : EPlayerClass::None;
 
-    UE_LOG(LogTemp, Warning, TEXT("[Item %s] Relevancy check: VisibleFor=%d, Viewer=%s, PlayerClass=%d"),
-        *GetName(),
-        (int32)VisibleFor,
-        PC ? *PC->GetName() : TEXT("None"),
-        (int32)PlayerClass
-    );
+    //UE_LOG(LogTemp, Warning, TEXT("[Item %s] Relevancy check: VisibleFor=%d, Viewer=%s, PlayerClass=%d"),
+    //    *GetName(),
+    //    (int32)VisibleFor,
+    //    PC ? *PC->GetName() : TEXT("None"),
+    //    (int32)PlayerClass
+    //);
 
     // 기본 relevancy 먼저 체크
     if (!Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation))

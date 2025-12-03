@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "DrawDebugHelpers.h"
 #include <Kismet/GameplayStatics.h>
+#include "Net/UnrealNetwork.h"
 
 ACatchMePolice::ACatchMePolice()
 {
@@ -22,6 +23,11 @@ void ACatchMePolice::Fire()
 	APlayerController* PC = Cast<APlayerController>(GetController());
 	if (!PC)
 		return;
+
+    const float Now = GetWorld()->GetTimeSeconds();
+    if (Now < NextAllowedFireTime)
+        return;
+
 
 	// 카메라 위치, 방향
 	FVector CameraLocation;
@@ -52,6 +58,16 @@ void ACatchMePolice::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ACatchMePolice::ServerFire_Implementation(const FVector_NetQuantize& TraceStart, const FVector_NetQuantize& TraceEnd)
 {
+    if (!CanFire())
+        return;
+
+    const float Now = GetWorld()->GetTimeSeconds();
+    NextAllowedFireTime = Now + FireInterval;
+
+
+    // 여기서 라인트레이스/데미지 처리
+
+
     // 무엇을 맞췄는지를 HitResult(구조체)에 저장
     FHitResult HitResult;
     // FCollisionQueryParams(const FName& InTraceTag, bool bInTraceComplex, const AActor* InIgnoreActor);
@@ -63,6 +79,7 @@ void ACatchMePolice::ServerFire_Implementation(const FVector_NetQuantize& TraceS
     UWorld* World = GetWorld();
     if (!World)
         return;
+
 
     bool bHit = World->LineTraceSingleByChannel(
         HitResult,
@@ -91,3 +108,16 @@ void ACatchMePolice::ServerFire_Implementation(const FVector_NetQuantize& TraceS
     // 디버그 라인 (서버 월드에서 그림. 원하면 Multicast로 클라에도 그림 표시 가능)
     DrawDebugLine(World, TraceStart, TraceEnd, FColor::Red, false, 1.0f, 0, 1.0f);
 }
+
+bool ACatchMePolice::CanFire()
+{
+    if (!HasAuthority())
+    {
+        // 서버에서만 진짜 검증할 거면 여기선 false만 리턴해도 됨
+        return true;
+    }
+
+    const float Now = GetWorld()->GetTimeSeconds();
+    return Now >= NextAllowedFireTime;
+}
+

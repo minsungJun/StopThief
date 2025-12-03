@@ -19,7 +19,7 @@ public:
 public:
 
 	UPROPERTY(Replicated)
-	int32 PoliceHP = 10;
+	int32 PoliceHP = 5;
 
 
 

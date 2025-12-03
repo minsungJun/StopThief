@@ -108,7 +108,7 @@ void ACatchMeCharacter::Sprint()
 
 	if (UCharacterMovementComponent* MC = GetCharacterMovement())
 	{
-		MC->MaxWalkSpeed = SprintSpeed;
+		MC->MaxWalkSpeed = SprintSpeed + ChangingSpeed;
 	}
 
 	// 서버에도 알려주기
@@ -125,7 +125,7 @@ void ACatchMeCharacter::StopSprint()
 
 	if (UCharacterMovementComponent* MC = GetCharacterMovement())
 	{
-		MC->MaxWalkSpeed = WalkSpeed;
+		MC->MaxWalkSpeed = WalkSpeed + ChangingSpeed;
 	}
 
 	ServerSetSprinting(false);
@@ -137,7 +137,7 @@ void ACatchMeCharacter::ServerSetSprinting_Implementation(bool bNewSprinting)
 
 	if (UCharacterMovementComponent* MC = GetCharacterMovement())
 	{
-		MC->MaxWalkSpeed = bNewSprinting ? SprintSpeed : WalkSpeed;
+		MC->MaxWalkSpeed = bNewSprinting ? SprintSpeed + ChangingSpeed : WalkSpeed + ChangingSpeed;
 	}
 }
 
@@ -159,4 +159,13 @@ void ACatchMeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACatchMeCharacter, bIsSprinting);
+	DOREPLIFETIME(ACatchMeCharacter, ChangingSpeed);
+}
+
+void ACatchMeCharacter::UpdateMovementSpeed()
+{
+	if (UCharacterMovementComponent* MC = GetCharacterMovement())
+	{
+		MC->MaxWalkSpeed = bIsSprinting ? SprintSpeed + ChangingSpeed : WalkSpeed + ChangingSpeed;
+	}
 }

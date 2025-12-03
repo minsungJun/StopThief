@@ -32,5 +32,13 @@ protected:
 
 	void ServerFire_Implementation(const FVector_NetQuantize& TraceStart, const FVector_NetQuantize& TraceEnd);
 
+	bool CanFire();
+
+public:
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float FireInterval = 0.2f; // 5발/초
+
+	float NextAllowedFireTime = 0.f;
+
 };
 

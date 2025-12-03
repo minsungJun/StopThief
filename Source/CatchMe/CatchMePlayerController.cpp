@@ -7,6 +7,7 @@
 #include "EngineUtils.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Blueprint/UserWidget.h"
+#include "CatchMeGameModeBase.h"
 
 void ACatchMePlayerController::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -49,9 +50,61 @@ void ACatchMePlayerController::BeginPlay()
 	if (IsValid(PoliceHPTextWidgetClass) == true)
 	{
 		PoliceHPTextWidgetInstance = CreateWidget<UUserWidget>(this, PoliceHPTextWidgetClass);
-		if (IsValid(PoliceHPTextWidgetClass) == true)
+		if (IsValid(PoliceHPTextWidgetInstance) == true)
 		{
 			PoliceHPTextWidgetInstance->AddToViewport();
 		}
 	}
+
+	if (IsValid(CrossHairWidgetClass) == true)
+	{
+		CrossHairWidgetInstance = CreateWidget<UUserWidget>(this, CrossHairWidgetClass);
+		if (IsValid(CrossHairWidgetInstance) == true)
+		{
+			CrossHairWidgetInstance->AddToViewport();
+		}
+	}
+
+	if (IsValid(StartButtonWidgetClass) == true)
+	{
+		StartButtonWidgetInstance = CreateWidget<UUserWidget>(this, StartButtonWidgetClass);
+		if (IsValid(StartButtonWidgetInstance) == true)
+		{
+			StartButtonWidgetInstance->AddToViewport();
+		}
+	}
+}
+
+
+void ACatchMePlayerController::Server_CallStartGame_Implementation()
+{
+	if (ACatchMeGameModeBase* GM = GetWorld()->GetAuthGameMode<ACatchMeGameModeBase>())
+	{
+		GM->StartGame();
+	}
+}
+
+void ACatchMePlayerController::Client_HideStartButton_Implementation()
+{
+	if (IsValid(StartButtonWidgetInstance))
+	{
+		StartButtonWidgetInstance->RemoveFromParent();
+		StartButtonWidgetInstance = nullptr;
+	}
+}
+
+void ACatchMePlayerController::Client_ShowStartButton_Implementation()
+{
+	if (IsValid(StartButtonWidgetInstance))
+		return;
+
+	else
+	{
+		StartButtonWidgetInstance = CreateWidget<UUserWidget>(this, StartButtonWidgetClass);
+		if (IsValid(StartButtonWidgetInstance) == true)
+		{
+			StartButtonWidgetInstance->AddToViewport();
+		}
+	}
+
 }

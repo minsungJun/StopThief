@@ -11,8 +11,19 @@
 
 
 class ACatchMePlayerController;
-//class ACatchMeThief;
+class ASpawnVolume;
+class ACatchMePolice;
+class ACatchMeThief;
 
+UENUM(BlueprintType)
+enum class ETimerType : uint8
+{
+	PoliceSlow UMETA(DisplayName = "PoliceSlow"),
+	ThiefSlow UMETA(DisplayName = "ThiefSlow"),
+	Timer UMETA(DisplayName = "Timer"),
+	GameOver UMETA(DisplayName = "GameOver"),
+	None UMETA(DisplayName = "None"),
+};
 
 UCLASS()
 class CATCHME_API ACatchMeGameModeBase : public AGameModeBase
@@ -22,22 +33,39 @@ class CATCHME_API ACatchMeGameModeBase : public AGameModeBase
 public:
 	virtual void OnPostLogin(AController* NewPlayer) override;
 
+	UFUNCTION(BlueprintCallable)
 	void StartGame();
 
-	void SpawnAndPossessPawnFor(ACatchMePlayerController* CMPC, EPlayerClass playerclass);
+	void ResetGame();
 
+	void ResetGameState();
+
+	void GameOver();
+
+	void SpawnAndPossessPawnFor(ACatchMePlayerController* CMPC, EPlayerClass playerclass);
 
 	void StartTimer();
 
 	void ResetTimer();
 
-	void EndTimer();
+	void EndTimer(ETimerType Type);
 
 	void HandlePoliceWin();
 
 	void HandleThiefWin();
 
 	void KillCitizen();
+
+	void InitSpawnVolumes();
+
+	UFUNCTION(BlueprintCallable)
+	void SpeedDownThief();
+
+	UFUNCTION(BlueprintCallable)
+	void SpeedDownPolice();
+
+	UFUNCTION(BlueprintCallable)
+	void HealPolice();
 
 
 protected:
@@ -56,12 +84,34 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Test")
 	TSubclassOf<AActor> TestItemClass2;
 
+	UPROPERTY(EditDefaultsOnly, Category = "SpawnVolume")
+	TSubclassOf<ASpawnVolume> SpawnVolume;
+
 	int32 TimerCount;
 
 	UPROPERTY(EditDefaultsOnly)
 	int32 MaxTimerCount;
 
 	FTimerHandle TimerHandle;
+
+	FTimerHandle GameOverTimerHandle;
+	int32 GameOverTimerCount = 10;
+
+	FTimerHandle ThiefSlowTimerHandle;
+	int32 ThiefSlowTimerCount;
+
+	FTimerHandle PoliceSlowTimerHandle;
+	int32 PoliceSlowTimerCount;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Pawn")
+	ACatchMePolice* Police = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Pawn")
+	ACatchMeThief* Thief = nullptr;
+
+public:
+	UPROPERTY()
+	ASpawnVolume* InWorldSpawnVolume = nullptr;
 	
 };
 
